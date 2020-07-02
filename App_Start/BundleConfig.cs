@@ -19,12 +19,29 @@ namespace TchOpenSource
             bundles.Add(new ScriptBundle("~/bundles/modernizr").Include(
                         "~/Scripts/modernizr-*"));
 
-            bundles.Add(new ScriptBundle("~/bundles/bootstrap").Include(
-                      "~/Scripts/bootstrap.js"));
+            bundles.Add(new ScriptBundle("~/bundles/bootstrap")
+                .Include("~/Content/fusion/js/jquery-min.js",
+                        "~/Content/fusion/js/popper.min.js",
+                        "~/Content/fusion/js/bootstrap.min.js",
+                        "~/Content/fusion/js/owl.carousel.min.js",
+                        "~/Content/fusion/js/wow.js",
+                        "~/Content/fusion/js/jquery.nav.js",
+                        "~/Content/fusion/js/scrolling-nav.js",
+                        "~/Content/fusion/js/jquery.easing.min.js",
+                        "~/Content/fusion/js/jquery.counterup.min.js",
+                        "~/Content/fusion/js/waypoints.min.js",
+                        "~/Content/fusion/js/main.js"));
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
-                      "~/Content/bootstrap.css",
-                      "~/Content/site.css"));
+                      "~/Content/fusion/css/bootstrap.min.css",
+                      "~/Content/fusion/fonts/line-icons.css",
+                      "~/Content/fusion/css/owl.carousel.min.css",
+                      "~/Content/fusion/css/owl.theme.css",
+                      "~/Content/fusion/css/magnific-popup.css",
+                      "~/Content/fusion/css/nivo-lightbox.css",
+                      "~/Content/fusion/css/animate.css",
+                      "~/Content/fusion/css/main.css",
+                      "~/Content/fusion/css/responsiveness.css"));
         }
     }
 }

@@ -2,29 +2,46 @@
     ViewBag.Title = "PDF Stitch";
 }
 
-<div class="jumbotron">
-    <h1>Stitch Two PDF Files Together</h1>
-    <p class="lead">
-        If you have multiple files you need to stitch together, stitch file #1 and #2 to get a merged copy.<br/>
-        Then you can stitch the merged copy with #3 and get a second merge. Repeat as often as possible.
-    </p>
-</div>
+@section Hero {
 
-<div class="row">
-    <div class="col-md-4">
-        <h2>Merge Files</h2>
-        <form action="Stitch" method="post" enctype="multipart/form-data">
-            <div class="form-group">
-                <label>First File</label>
-                <input type="file" name="firstFile" />
+    <div id="hero-area" class="hero-area-bg">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-7 col-md-12 col-sm-12 col-xs-12">
+                    <div class="contents">
+                        <h2 class="head-title">TCH Open Source</h2>
+                        <p>A collection of utilities available under open source</p>
+                    </div>
+                </div>
+                <div class="col-lg-5 col-md-12 col-sm-12 col-xs-12">
+                    <div class="intro-img">
+                        <img class="img-fluid" src="~/Content/fusion/img/intro-mobile.png" alt="">
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <label>Second File</label>
-                <input type="file" name="secondFile" />
-            </div>
-            <div class="form-group">
-                <button type="submit">Stitch Together</button>
-            </div>
-        </form>
+        </div>
     </div>
-</div>
+}
+
+<section id="services" class="section-padding">
+    <div class="container">
+        <div class="section-header text-center">
+            <h2 class="section-title wow fadeInDown animated" data-wow-delay="0.3s" style="visibility: visible;-webkit-animation-delay: 0.3s; -moz-animation-delay: 0.3s; animation-delay: 0.3s;">PDF Utilities</h2>
+            <div class="shape wow fadeInDown animated" data-wow-delay="0.3s" style="visibility: visible;-webkit-animation-delay: 0.3s; -moz-animation-delay: 0.3s; animation-delay: 0.3s;"></div>
+        </div>
+        <div class="row">
+            <!-- Services item -->
+            <div class="col-md-6 col-lg-4 col-xs-12">
+                <div class="services-item wow fadeInRight animated" data-wow-delay="0.3s" style="visibility: visible;-webkit-animation-delay: 0.3s; -moz-animation-delay: 0.3s; animation-delay: 0.3s;">
+                    <div class="icon">
+                        <i class="lni-cog"></i>
+                    </div>
+                    <div class="services-content">
+                        <h3><a href="#">Merge PDF Files</a></h3>
+                        <p>Upload two PDF files, get back one. <a href="@Url.Action("Index", "PdfUtils")">Try it out</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

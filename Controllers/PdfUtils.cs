@@ -12,7 +12,7 @@ using TchOpenSource.Lib;
 
 namespace TchOpenSource.Controllers
 {
-    public class PdfUtilController : Controller
+    public class PdfUtilsController : Controller
     {
         public ActionResult Index()
         {
