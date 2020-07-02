@@ -1,0 +1,30 @@
+﻿@{
+    ViewBag.Title = "PDF Stitch";
+}
+
+<div class="jumbotron">
+    <h1>Stitch Two PDF Files Together</h1>
+    <p class="lead">
+        If you have multiple files you need to stitch together, stitch file #1 and #2 to get a merged copy.<br/>
+        Then you can stitch the merged copy with #3 and get a second merge. Repeat as often as possible.
+    </p>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <h2>Merge Files</h2>
+        <form action="Stitch" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <label>First File</label>
+                <input type="file" name="firstFile" />
+            </div>
+            <div class="form-group">
+                <label>Second File</label>
+                <input type="file" name="secondFile" />
+            </div>
+            <div class="form-group">
+                <button type="submit">Stitch Together</button>
+            </div>
+        </form>
+    </div>
+</div>
