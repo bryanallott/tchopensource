@@ -32,6 +32,10 @@ namespace TchOpenSource
                         "~/Content/fusion/js/waypoints.min.js",
                         "~/Content/fusion/js/main.js"));
 
+            bundles.Add(new ScriptBundle("~/bundles/tinymce")
+                        .Include("~/Scripts/tinymce/tinymce.js"));
+
+
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/fusion/css/bootstrap.min.css",
                       "~/Content/fusion/fonts/line-icons.css",

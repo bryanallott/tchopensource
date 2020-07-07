@@ -9,6 +9,10 @@
 </head>
 <body>
 
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+
+
     <header id="header-wrap">
         <nav class="navbar navbar-expand-md bg-inverse fixed-top scrolling-navbar">
             <div class="container">
@@ -22,6 +26,9 @@
                             <a class="nav-link" href="@Url.Action("Index", "Home")">
                                 Home
                             </a>
+                            <a class="nav-link" href="@Url.Action("Index", "PdfUtils")">
+                                PDF Utils
+                            </a>
                         </li>
                     </ul>
                 </div>
@@ -34,8 +41,6 @@
 
     @RenderBody()
 
-    @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
 </body>
 </html>

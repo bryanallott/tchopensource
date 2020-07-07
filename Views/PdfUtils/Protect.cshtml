@@ -1,0 +1,44 @@
+﻿@{
+    ViewBag.Title = "PDF Utils";
+}
+
+    <div class="about-area section-padding bg-gray">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6 col-md-12 col-xs-12 wow fadeInRight animated" data-wow-delay="0.3s" style="visibility: visible;-webkit-animation-delay: 0.3s; -moz-animation-delay: 0.3s; animation-delay: 0.3s;">
+                    <div class="about-wrapper wow fadeInLeft animated" data-wow-delay="0.3s" style="visibility: visible;-webkit-animation-delay: 0.3s; -moz-animation-delay: 0.3s; animation-delay: 0.3s;">
+                        <div>
+                            <div class="site-heading">
+                                <p class="mb-3"><p class="mb-3"><a href="Index">Stitch</a> | <a href="Protect">Protect</a> | <a href="Make">Make</a></p></p>
+                                <h2 class="section-title">Password Protect PDF Files</h2>
+                            </div>
+                            <div class="content">
+                                <p class="lead">
+                                    Upload multiple files that all need to be password protected. The download will contain those same PDF files, just password protected for reading.
+                                </p>
+
+                                <form action="@Url.Action("MakeProtectionBundle", "PdfUtils")" method="post" enctype="multipart/form-data">
+                                    <div class="form-group">
+                                        <label>Select Files (up to 5Mb at a time)</label>
+                                        <input type="file" multiple name="files" required />
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Password</label>
+                                        <input type="text" name="password" maxlength="32" required />
+                                    </div>
+                                    <div class="form-group">
+                                        <button class="btn btn-primary" type="submit">Protect</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6 col-md-12 col-xs-12 info">
+                    <img class="img-fluid" src="~/Content/fusion/img/about/img-1.png" alt="">
+                </div>
+            </div>
+        </div>
+    </div>
+

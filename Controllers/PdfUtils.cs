@@ -10,6 +10,7 @@ using ICSharpCode.SharpZipLib.Zip;
 using iText.IO.Source;
 using iText.Kernel.Pdf;
 using iText.Kernel.Utils;
+using iText.Html2pdf;
 using TchOpenSource.Lib;
 
 namespace TchOpenSource.Controllers
@@ -20,8 +21,36 @@ namespace TchOpenSource.Controllers
         {
             return View();
         }
+        public ActionResult Make()
+        {
+            return View();
+        }
+        public ActionResult Protect()
+        {
+            return View();
+        }
 
-        public async Task<ActionResult> Protect(List<HttpPostedFileBase> Files, string Password)
+        [HttpPost]
+        [ValidateInput(false)]
+        public ActionResult MakePdf(string Content, string Password)
+        {
+            using (MemoryStream ms = new MemoryStream())
+            {
+                WriterProperties writerProperties = new WriterProperties();
+                if (!string.IsNullOrEmpty(Password))
+                {
+                    writerProperties.SetStandardEncryption(UTF8Encoding.UTF8.GetBytes(Password), null, EncryptionConstants.ALLOW_PRINTING | EncryptionConstants.ALLOW_FILL_IN, EncryptionConstants.ENCRYPTION_AES_128);
+                }
+                using (var writer = new PdfWriter(ms, writerProperties))
+                {
+                    HtmlConverter.ConvertToPdf(Content, writer);
+                    writer.Close();
+                }
+                return File(ms.ToArray(), "application/pdf", "mynewpdf.pdf");
+            }
+        }
+        [HttpPost]
+        public ActionResult MakeProtectionBundle(List<HttpPostedFileBase> Files, string Password)
         {
             List<Tuple<byte[], string>> files = new List<Tuple<byte[], string>>();
             foreach (var file in Files)
@@ -57,6 +86,7 @@ namespace TchOpenSource.Controllers
                 }
             }
         }
+        [HttpPost]
         public ActionResult Stitch(HttpPostedFileBase firstFile, HttpPostedFileBase secondFile)
         {
             string filename = $"{firstFile.FileName}-merged.pdf";
