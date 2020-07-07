@@ -56,6 +56,9 @@
     <Reference Include="Common.Logging.Core, Version=3.4.1.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
       <HintPath>packages\Common.Logging.Core.3.4.1\lib\net40\Common.Logging.Core.dll</HintPath>
     </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=1.2.0.246, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
+      <HintPath>packages\SharpZipLib.1.2.0\lib\net45\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
     <Reference Include="itext.barcodes, Version=7.1.11.0, Culture=neutral, PublicKeyToken=8354ae6d2174ddca, processorArchitecture=MSIL">
       <HintPath>packages\itext7.7.1.11\lib\net40\itext.barcodes.dll</HintPath>
     </Reference>
@@ -256,6 +259,9 @@
     <Content Include="Content\fusion\fonts\LineIcons.ttf" />
     <Content Include="Content\fusion\fonts\LineIcons.woff" />
     <Content Include="Content\fusion\img\logo.psd" />
+    <None Include="Properties\PublishProfiles\tchopensource - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\tchopensource - ReadOnly - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\tchopensource - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-3.5.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.5.1.js" />
     <Content Include="Scripts\jquery-3.5.1.min.js" />

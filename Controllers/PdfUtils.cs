@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using ICSharpCode.SharpZipLib.Zip;
 using iText.IO.Source;
 using iText.Kernel.Pdf;
 using iText.Kernel.Utils;
@@ -18,7 +20,43 @@ namespace TchOpenSource.Controllers
         {
             return View();
         }
-        
+
+        public async Task<ActionResult> Protect(List<HttpPostedFileBase> Files, string Password)
+        {
+            List<Tuple<byte[], string>> files = new List<Tuple<byte[], string>>();
+            foreach (var file in Files)
+            {
+                PdfReader pdfReader = new PdfReader(file.InputStream);
+                WriterProperties writerProperties = new WriterProperties();
+                writerProperties.SetStandardEncryption(UTF8Encoding.UTF8.GetBytes(Password), null, EncryptionConstants.ALLOW_PRINTING | EncryptionConstants.ALLOW_FILL_IN, EncryptionConstants.ENCRYPTION_AES_128);
+
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    PdfWriter pdfWriter = new PdfWriter(ms, writerProperties);
+                    PdfDocument pdfDocument = new PdfDocument(pdfReader, pdfWriter);
+                    pdfDocument.Close();
+                    files.Add(new Tuple<byte[], string>(ms.ToArray(), file.FileName));
+                }
+            }
+            using (MemoryStream result = new MemoryStream())
+            {
+                using (ZipOutputStream zipStream = new ZipOutputStream(result))
+                {
+                    zipStream.SetLevel(3);
+                    foreach (var entry in files)
+                    {
+                        ZipEntry zipEntry = new ZipEntry(ZipEntry.CleanName(entry.Item2));
+                        //zipEntry.Size = entry.Item2.Length;
+                        zipStream.PutNextEntry(zipEntry);
+                        zipStream.Write(entry.Item1, 0, entry.Item1.Length);
+                        zipStream.CloseEntry();
+                    }
+                    zipStream.Finish();
+                    zipStream.Close();
+                    return File(result.ToArray(), "application/zip", "protectedbundle.zip");
+                }
+            }
+        }
         public ActionResult Stitch(HttpPostedFileBase firstFile, HttpPostedFileBase secondFile)
         {
             string filename = $"{firstFile.FileName}-merged.pdf";
