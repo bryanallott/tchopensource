@@ -12,6 +12,8 @@ using iText.Kernel.Pdf;
 using iText.Kernel.Utils;
 using iText.Html2pdf;
 using TchOpenSource.Lib;
+using iText.Kernel.Pdf.Canvas.Parser.Listener;
+using iText.Kernel.Pdf.Canvas.Parser;
 
 namespace TchOpenSource.Controllers
 {
@@ -29,7 +31,57 @@ namespace TchOpenSource.Controllers
         {
             return View();
         }
+        public ActionResult Extract()
+        {
+            return View();
+        }
 
+        private byte[] GetContents(Stream inputstream)
+        {
+            StringBuilder sb = new StringBuilder();
+            using (PdfReader pdfReader = new PdfReader(inputstream))
+            {
+                using (PdfDocument pdfDoc = new PdfDocument(pdfReader))
+                {
+                    LocationTextExtractionStrategy strategy = new LocationTextExtractionStrategy();
+                    PdfCanvasProcessor parser = new PdfCanvasProcessor(strategy);
+                    for (int ii = 1; ii <= pdfDoc.GetNumberOfPages(); ii++)
+                    {
+                        parser.ProcessPageContent(pdfDoc.GetPage(ii));
+                        sb.Append(strategy.GetResultantText());
+                    }
+                    pdfDoc.Close();
+                }
+            }
+            return UTF8Encoding.UTF8.GetBytes(sb.ToString());
+        }
+        [HttpPost]
+        public ActionResult ExtractText(List<HttpPostedFileBase> Files)
+        {
+            List<Tuple<byte[], string>> files = new List<Tuple<byte[], string>>();
+            foreach (var file in Files)
+            {
+                files.Add(new Tuple<byte[], string>(GetContents(file.InputStream), file.FileName));
+            }
+            using (MemoryStream result = new MemoryStream())
+            {
+                using (ZipOutputStream zipStream = new ZipOutputStream(result))
+                {
+                    zipStream.SetLevel(3);
+                    foreach (var entry in files)
+                    {
+                        ZipEntry zipEntry = new ZipEntry(ZipEntry.CleanName($"{entry.Item2}.txt"));
+                        //zipEntry.Size = entry.Item2.Length;
+                        zipStream.PutNextEntry(zipEntry);
+                        zipStream.Write(entry.Item1, 0, entry.Item1.Length);
+                        zipStream.CloseEntry();
+                    }
+                    zipStream.Finish();
+                    zipStream.Close();
+                    return File(result.ToArray(), "application/zip", "protectedbundle.zip");
+                }
+            }
+        }
         [HttpPost]
         [ValidateInput(false)]
         public ActionResult MakePdf(string Content, string Password)

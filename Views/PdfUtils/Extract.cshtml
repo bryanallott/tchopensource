@@ -5,37 +5,33 @@
     <div class="about-area section-padding bg-gray">
         <div class="container">
             <div class="row">
-                <div class="col-lg-6 col-md-12 col-xs-12 info">
+                <div class="col-lg-6 col-md-12 col-xs-12 wow fadeInRight animated" data-wow-delay="0.3s" style="visibility: visible;-webkit-animation-delay: 0.3s; -moz-animation-delay: 0.3s; animation-delay: 0.3s;">
                     <div class="about-wrapper wow fadeInLeft animated" data-wow-delay="0.3s" style="visibility: visible;-webkit-animation-delay: 0.3s; -moz-animation-delay: 0.3s; animation-delay: 0.3s;">
                         <div>
                             <div class="site-heading">
                                 <p class="mb-3"><p class="mb-3"><a href="/PdfUtils/Index">Stitch</a> | <a href="/PdfUtils/Protect">Protect</a> | <a href="/PdfUtils/Make">Make</a> | <a href="/PdfUtils/Extract">Extract</a></p>
-                                <h2 class="section-title">Stitch PDF</h2>
+                                <h2 class="section-title">Extract Text from PDF Files</h2>
                             </div>
                             <div class="content">
                                 <p class="lead">
-                                    If you have multiple files you need to stitch together, stitch file #1 and #2 to get a merged copy.<br />
-                                    Then you can stitch the merged copy with #3 and get a second merge. Repeat as often as required.
+                                    Upload multiple files that all need to have their text extracted. The download will contain those same PDF files in text format.
                                 </p>
 
-                                <form action="@Url.Action("Stitch", "PdfUtils")" method="post" enctype="multipart/form-data">
+                                <form action="@Url.Action("ExtractText", "PdfUtils")" method="post" enctype="multipart/form-data">
                                     <div class="form-group">
-                                        <label>First File</label>
-                                        <input type="file" name="firstFile" required />
+                                        <label>Select Files (up to 5Mb at a time)</label>
+                                        <input type="file" multiple name="files" required />
                                     </div>
                                     <div class="form-group">
-                                        <label>Second File</label>
-                                        <input type="file" name="secondFile" required />
-                                    </div>
-                                    <div class="form-group">
-                                        <button class="btn btn-primary" type="submit">Merge</button>
+                                        <button class="btn btn-primary" type="submit">Extract</button>
                                     </div>
                                 </form>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-6 col-md-12 col-xs-12 wow fadeInRight animated" data-wow-delay="0.3s" style="visibility: visible;-webkit-animation-delay: 0.3s; -moz-animation-delay: 0.3s; animation-delay: 0.3s;">
+
+                <div class="col-lg-6 col-md-12 col-xs-12 info">
                     <img class="img-fluid" src="~/Content/fusion/img/about/img-1.png" alt="">
                 </div>
             </div>
