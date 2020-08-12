@@ -14,6 +14,8 @@ using iText.Html2pdf;
 using TchOpenSource.Lib;
 using iText.Kernel.Pdf.Canvas.Parser.Listener;
 using iText.Kernel.Pdf.Canvas.Parser;
+using iText.Kernel.Geom;
+using iText.StyledXmlParser.Css.Media;
 
 namespace TchOpenSource.Controllers
 {
@@ -95,7 +97,19 @@ namespace TchOpenSource.Controllers
                 }
                 using (var writer = new PdfWriter(ms, writerProperties))
                 {
-                    HtmlConverter.ConvertToPdf(Content, writer);
+                    PdfDocument pdf = new PdfDocument(writer);
+                    pdf.SetTagged();
+                    pdf.SetDefaultPageSize(PageSize.A4);
+
+                    ConverterProperties properties = new ConverterProperties();
+                    //properties.setBaseUri(baseUri);
+                    MediaDeviceDescription mediaDeviceDescription = new MediaDeviceDescription(MediaType.SCREEN);
+                    mediaDeviceDescription.SetWidth(PageSize.A4.GetWidth());
+                    properties.SetMediaDeviceDescription(mediaDeviceDescription);
+
+                    HtmlConverter.ConvertToPdf(Content, pdf, properties);
+
+                    //HtmlConverter.ConvertToPdf(Content, writer);
                     writer.Close();
                 }
                 return File(ms.ToArray(), "application/pdf", "mynewpdf.pdf");
