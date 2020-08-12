@@ -7,10 +7,14 @@
 
   <ItemGroup>
     <None Remove="resources\affidavit.html" />
+    <None Remove="resources\preface.pdf" />
+    <None Remove="resources\report.pdf" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="resources\affidavit.html" />
+    <EmbeddedResource Include="resources\preface.pdf" />
+    <EmbeddedResource Include="resources\report.pdf" />
   </ItemGroup>
 
   <ItemGroup>
