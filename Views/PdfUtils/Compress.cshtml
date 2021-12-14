@@ -1,5 +1,5 @@
 ﻿@{
-    ViewBag.Title = "Password Protect PDFs";
+    ViewBag.Title = "Compress PDFs";
 }
 
     <div class="about-area section-padding bg-gray">
@@ -13,20 +13,16 @@
                             </div>
                             <div class="content">
                                 <p class="lead">
-                                    Upload multiple files that all need to be password protected. The download will contain those same PDF files, just password protected for reading.
+                                    Upload multiple files that all need to be compressed. The download will contain those same PDF files, just compressed.
                                 </p>
 
-                                <form action="@Url.Action("MakeProtectionBundle", "PdfUtils")" method="post" enctype="multipart/form-data">
+                                <form action="@Url.Action("HandleCompress", "PdfUtils")" method="post" enctype="multipart/form-data">
                                     <div class="form-group">
                                         <label>Select Files (up to 30Mb at a time)</label>
                                         <input type="file" multiple name="files" required />
                                     </div>
                                     <div class="form-group">
-                                        <label>Password</label>
-                                        <input type="text" name="password" maxlength="32" required />
-                                    </div>
-                                    <div class="form-group">
-                                        <button class="btn btn-primary" type="submit">Protect</button>
+                                        <button class="btn btn-primary" type="submit">Compress</button>
                                     </div>
                                 </form>
                             </div>

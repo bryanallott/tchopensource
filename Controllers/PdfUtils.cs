@@ -33,6 +33,10 @@ namespace TchOpenSource.Controllers
         {
             return View();
         }
+        public ActionResult Compress()
+        {
+            return View();
+        }
         public ActionResult Extract()
         {
             return View();
@@ -58,6 +62,53 @@ namespace TchOpenSource.Controllers
             return UTF8Encoding.UTF8.GetBytes(sb.ToString());
         }
         [HttpPost]
+        public ActionResult HandleCompress(List<HttpPostedFileBase> Files)
+        {
+            List<Tuple<byte[], string>> files = new List<Tuple<byte[], string>>();
+            foreach (var file in Files)
+            {
+                using (PdfReader pdfReader = new PdfReader(file.InputStream))
+                {
+                    WriterProperties writerProperties = new WriterProperties();
+                    using (MemoryStream ms = new MemoryStream())
+                    {
+                        using (PdfWriter pdfWriter = new PdfWriter(ms, writerProperties))
+                        {
+                            pdfWriter.SetCompressionLevel(9);
+                            PdfDocument pdfDocument = new PdfDocument(pdfReader, pdfWriter);
+                            pdfDocument.Close();
+                            files.Add(new Tuple<byte[], string>(ms.ToArray(), file.FileName));
+                        }
+                    }
+                }
+            }
+            if (1 < files.Count)
+            {
+                using (MemoryStream result = new MemoryStream())
+                {
+                    using (ZipOutputStream zipStream = new ZipOutputStream(result))
+                    {
+                        zipStream.SetLevel(3);
+                        foreach (var entry in files)
+                        {
+                            ZipEntry zipEntry = new ZipEntry(ZipEntry.CleanName(entry.Item2));
+                            //zipEntry.Size = entry.Item2.Length;
+                            zipStream.PutNextEntry(zipEntry);
+                            zipStream.Write(entry.Item1, 0, entry.Item1.Length);
+                            zipStream.CloseEntry();
+                        }
+                        zipStream.Finish();
+                        zipStream.Close();
+                        return File(result.ToArray(), "application/zip", "compressedbundle.zip");
+                    }
+                }
+            }
+            else
+            {
+                return File(files[0].Item1, "application/pdf", files[0].Item2);
+            }
+        }
+        [HttpPost]
         public ActionResult ExtractText(List<HttpPostedFileBase> Files)
         {
             List<Tuple<byte[], string>> files = new List<Tuple<byte[], string>>();
@@ -65,23 +116,30 @@ namespace TchOpenSource.Controllers
             {
                 files.Add(new Tuple<byte[], string>(GetContents(file.InputStream), file.FileName));
             }
-            using (MemoryStream result = new MemoryStream())
+            if (1 < files.Count)
             {
-                using (ZipOutputStream zipStream = new ZipOutputStream(result))
+                using (MemoryStream result = new MemoryStream())
                 {
-                    zipStream.SetLevel(3);
-                    foreach (var entry in files)
+                    using (ZipOutputStream zipStream = new ZipOutputStream(result))
                     {
-                        ZipEntry zipEntry = new ZipEntry(ZipEntry.CleanName($"{entry.Item2}.txt"));
-                        //zipEntry.Size = entry.Item2.Length;
-                        zipStream.PutNextEntry(zipEntry);
-                        zipStream.Write(entry.Item1, 0, entry.Item1.Length);
-                        zipStream.CloseEntry();
+                        zipStream.SetLevel(3);
+                        foreach (var entry in files)
+                        {
+                            ZipEntry zipEntry = new ZipEntry(ZipEntry.CleanName($"{entry.Item2}.txt"));
+                            //zipEntry.Size = entry.Item2.Length;
+                            zipStream.PutNextEntry(zipEntry);
+                            zipStream.Write(entry.Item1, 0, entry.Item1.Length);
+                            zipStream.CloseEntry();
+                        }
+                        zipStream.Finish();
+                        zipStream.Close();
+                        return File(result.ToArray(), "application/zip", "protectedbundle.zip");
                     }
-                    zipStream.Finish();
-                    zipStream.Close();
-                    return File(result.ToArray(), "application/zip", "protectedbundle.zip");
                 }
+            }
+            else
+            {
+                return File(files[0].Item1, "application/pdf", files[0].Item2);
             }
         }
         [HttpPost]
@@ -97,6 +155,7 @@ namespace TchOpenSource.Controllers
                 }
                 using (var writer = new PdfWriter(ms, writerProperties))
                 {
+                    writer.SetCompressionLevel(9);
                     PdfDocument pdf = new PdfDocument(writer);
                     pdf.SetTagged();
                     pdf.SetDefaultPageSize(PageSize.A4);
@@ -121,35 +180,47 @@ namespace TchOpenSource.Controllers
             List<Tuple<byte[], string>> files = new List<Tuple<byte[], string>>();
             foreach (var file in Files)
             {
-                PdfReader pdfReader = new PdfReader(file.InputStream);
-                WriterProperties writerProperties = new WriterProperties();
-                writerProperties.SetStandardEncryption(UTF8Encoding.UTF8.GetBytes(Password), null, EncryptionConstants.ALLOW_PRINTING | EncryptionConstants.ALLOW_FILL_IN, EncryptionConstants.ENCRYPTION_AES_128);
-
-                using (MemoryStream ms = new MemoryStream())
+                using (PdfReader pdfReader = new PdfReader(file.InputStream))
                 {
-                    PdfWriter pdfWriter = new PdfWriter(ms, writerProperties);
-                    PdfDocument pdfDocument = new PdfDocument(pdfReader, pdfWriter);
-                    pdfDocument.Close();
-                    files.Add(new Tuple<byte[], string>(ms.ToArray(), file.FileName));
+                    WriterProperties writerProperties = new WriterProperties();
+                    writerProperties.SetStandardEncryption(UTF8Encoding.UTF8.GetBytes(Password), null, EncryptionConstants.ALLOW_PRINTING | EncryptionConstants.ALLOW_FILL_IN, EncryptionConstants.ENCRYPTION_AES_128);
+
+                    using (MemoryStream ms = new MemoryStream())
+                    {
+                        using (PdfWriter pdfWriter = new PdfWriter(ms, writerProperties))
+                        {
+                            pdfWriter.SetCompressionLevel(9);
+                            PdfDocument pdfDocument = new PdfDocument(pdfReader, pdfWriter);
+                            pdfDocument.Close();
+                            files.Add(new Tuple<byte[], string>(ms.ToArray(), file.FileName));
+                        }
+                    }
                 }
             }
-            using (MemoryStream result = new MemoryStream())
+            if (1 < files.Count)
             {
-                using (ZipOutputStream zipStream = new ZipOutputStream(result))
+                using (MemoryStream result = new MemoryStream())
                 {
-                    zipStream.SetLevel(3);
-                    foreach (var entry in files)
+                    using (ZipOutputStream zipStream = new ZipOutputStream(result))
                     {
-                        ZipEntry zipEntry = new ZipEntry(ZipEntry.CleanName(entry.Item2));
-                        //zipEntry.Size = entry.Item2.Length;
-                        zipStream.PutNextEntry(zipEntry);
-                        zipStream.Write(entry.Item1, 0, entry.Item1.Length);
-                        zipStream.CloseEntry();
+                        zipStream.SetLevel(3);
+                        foreach (var entry in files)
+                        {
+                            ZipEntry zipEntry = new ZipEntry(ZipEntry.CleanName(entry.Item2));
+                            //zipEntry.Size = entry.Item2.Length;
+                            zipStream.PutNextEntry(zipEntry);
+                            zipStream.Write(entry.Item1, 0, entry.Item1.Length);
+                            zipStream.CloseEntry();
+                        }
+                        zipStream.Finish();
+                        zipStream.Close();
+                        return File(result.ToArray(), "application/zip", "protectedbundle.zip");
                     }
-                    zipStream.Finish();
-                    zipStream.Close();
-                    return File(result.ToArray(), "application/zip", "protectedbundle.zip");
                 }
+            }
+            else
+            {
+                return File(files[0].Item1, "application/pdf", files[0].Item2);
             }
         }
         [HttpPost]
@@ -160,6 +231,7 @@ namespace TchOpenSource.Controllers
             {
                 using (PdfDocument pdf = new PdfDocument(new PdfWriter(ms)))
                 {
+                    pdf.GetWriter().SetCompressionLevel(9);
                     using (PdfReader reader = new PdfReader(firstFile.InputStream))
                     {
                         PdfDocument srcDoc = new PdfDocument(reader);
