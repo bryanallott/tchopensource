@@ -16,6 +16,16 @@ using iText.Kernel.Pdf.Canvas.Parser.Listener;
 using iText.Kernel.Pdf.Canvas.Parser;
 using iText.Kernel.Geom;
 using iText.StyledXmlParser.Css.Media;
+using iText.Kernel.Pdf.Canvas;
+using iText.Layout;
+using iText.IO.Image;
+using iText.Layout.Element;
+using iText.Pdfa;
+using iText.StyledXmlParser.Jsoup.Nodes;
+using System.Drawing.Imaging;
+using QRCoder;
+using ConvergencyBloc.AzureBlob;
+using TchOpenSource.Models;
 
 namespace TchOpenSource.Controllers
 {
@@ -142,16 +152,125 @@ namespace TchOpenSource.Controllers
                 return File(files[0].Item1, "application/pdf", files[0].Item2);
             }
         }
+
+        public ActionResult Initial()
+        {
+            return View();
+        }
+        [HttpPost]
+        public ActionResult InitialPages(List<HttpPostedFileBase> Files)
+        {
+            List<Tuple<byte[], string>> files = new List<Tuple<byte[], string>>();
+            var pdfFiles = Files.Where(x => x.FileName.EndsWith("pdf"));
+            var signatureImage = Files.FirstOrDefault(x => !x.FileName.EndsWith("pdf"));
+
+            foreach (var pdfFile in pdfFiles)
+            {
+                using (PdfReader pdfReader = new PdfReader(pdfFile.InputStream))
+                {
+                    using (MemoryStream ms = new MemoryStream())
+                    {
+                        using (PdfWriter pdfWriter = new PdfWriter(ms))
+                        {
+                            PdfDocument pdfDocument = new PdfDocument(pdfReader, pdfWriter);
+                            iText.Layout.Document document = new iText.Layout.Document(pdfDocument);
+
+                            using (MemoryStream msimg = new MemoryStream())
+                            {
+                                signatureImage.InputStream.CopyTo(msimg);
+                                ImageData imageData = ImageDataFactory.Create(msimg.ToArray());
+
+                                for (int PageNr = 1; PageNr == pdfDocument.GetNumberOfPages(); PageNr++)
+                                {
+                                    float right = pdfDocument.GetDefaultPageSize().GetRight();
+                                    float bottom = pdfDocument.GetDefaultPageSize().GetBottom();
+                                    Image image = new Image(imageData)
+                                            .ScaleToFit(20, 20)
+                                            .SetFixedPosition(PageNr, right - 50, bottom - 50);
+                                    document.Add(image);
+                                }
+                                document.Close();
+                            }
+                            files.Add(new Tuple<byte[], string>(ms.ToArray(), pdfFile.FileName));
+                        }
+                    }
+                }
+            }
+            if (1 < files.Count)
+            {
+                using (MemoryStream result = new MemoryStream())
+                {
+                    using (ZipOutputStream zipStream = new ZipOutputStream(result))
+                    {
+                        zipStream.SetLevel(3);
+                        foreach (var entry in files)
+                        {
+                            ZipEntry zipEntry = new ZipEntry(ZipEntry.CleanName(entry.Item2));
+                            //zipEntry.Size = entry.Item2.Length;
+                            zipStream.PutNextEntry(zipEntry);
+                            zipStream.Write(entry.Item1, 0, entry.Item1.Length);
+                            zipStream.CloseEntry();
+                        }
+                        zipStream.Finish();
+                        zipStream.Close();
+                        return File(result.ToArray(), "application/zip", "protectedbundle.zip");
+                    }
+                }
+            }
+            else
+            {
+                return File(files[0].Item1, "application/pdf", files[0].Item2);
+            }
+        }
+
+        [HttpPost]
+        public ActionResult AddSignature(List<HttpPostedFileBase> Files, int PageNr)
+        {
+            var pdfFile = Files.FirstOrDefault(x => x.FileName.EndsWith("pdf"));
+            var signatureImage = Files.FirstOrDefault(x => !x.FileName.EndsWith("pdf"));
+
+            using (PdfReader pdfReader = new PdfReader(pdfFile.InputStream))
+            {
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    using (PdfWriter pdfWriter = new PdfWriter(ms))
+                    {
+                        PdfDocument pdfDocument = new PdfDocument(pdfReader, pdfWriter);
+                        iText.Layout.Document document = new iText.Layout.Document(pdfDocument);
+
+                        using(MemoryStream msimg = new MemoryStream())
+                        {
+                            signatureImage.InputStream.CopyTo(msimg);
+                            ImageData imageData = ImageDataFactory.Create(msimg.ToArray());
+
+                            Image image = new Image(imageData)
+                                    .ScaleToFit(100, 200)
+                                    .SetFixedPosition(PageNr, 25, 25);
+
+                            document.Add(image);
+                            document.Close();
+                        }
+                        return File(ms.ToArray(), "application/pdf", pdfFile.FileName);
+                    }
+                }
+            }
+        }
+
         [HttpPost]
         [ValidateInput(false)]
-        public ActionResult MakePdf(string Content, string Password)
+        public ActionResult MakePdf(string Content, string Password, string PasswordEdit)
         {
             using (MemoryStream ms = new MemoryStream())
             {
                 WriterProperties writerProperties = new WriterProperties();
-                if (!string.IsNullOrEmpty(Password))
+                if (!string.IsNullOrEmpty(Password) ||
+                    !string.IsNullOrEmpty(PasswordEdit))
                 {
-                    writerProperties.SetStandardEncryption(UTF8Encoding.UTF8.GetBytes(Password), null, EncryptionConstants.ALLOW_PRINTING | EncryptionConstants.ALLOW_FILL_IN, EncryptionConstants.ENCRYPTION_AES_128);
+                    writerProperties.SetStandardEncryption(
+                        string.IsNullOrEmpty(Password) ? null : UTF8Encoding.UTF8.GetBytes(Password),
+                        string.IsNullOrEmpty(PasswordEdit) ? null : UTF8Encoding.UTF8.GetBytes(PasswordEdit), 
+                        EncryptionConstants.ALLOW_PRINTING | EncryptionConstants.ALLOW_FILL_IN, 
+                        EncryptionConstants.ENCRYPTION_AES_128);
                 }
                 using (var writer = new PdfWriter(ms, writerProperties))
                 {
@@ -175,7 +294,7 @@ namespace TchOpenSource.Controllers
             }
         }
         [HttpPost]
-        public ActionResult MakeProtectionBundle(List<HttpPostedFileBase> Files, string Password)
+        public ActionResult MakeProtectionBundle(List<HttpPostedFileBase> Files, string Password, string PasswordEdit)
         {
             List<Tuple<byte[], string>> files = new List<Tuple<byte[], string>>();
             foreach (var file in Files)
@@ -183,7 +302,13 @@ namespace TchOpenSource.Controllers
                 using (PdfReader pdfReader = new PdfReader(file.InputStream))
                 {
                     WriterProperties writerProperties = new WriterProperties();
-                    writerProperties.SetStandardEncryption(UTF8Encoding.UTF8.GetBytes(Password), null, EncryptionConstants.ALLOW_PRINTING | EncryptionConstants.ALLOW_FILL_IN, EncryptionConstants.ENCRYPTION_AES_128);
+                    writerProperties.SetStandardEncryption(
+                        string.IsNullOrEmpty(Password) ? null : UTF8Encoding.UTF8.GetBytes(Password),
+                        string.IsNullOrEmpty(PasswordEdit) ? null : UTF8Encoding.UTF8.GetBytes(PasswordEdit), 
+                        EncryptionConstants.ALLOW_PRINTING 
+                        | EncryptionConstants.ALLOW_FILL_IN
+                        | EncryptionConstants.ALLOW_COPY                       
+                        , EncryptionConstants.ENCRYPTION_AES_128);
 
                     using (MemoryStream ms = new MemoryStream())
                     {
@@ -223,13 +348,93 @@ namespace TchOpenSource.Controllers
                 return File(files[0].Item1, "application/pdf", files[0].Item2);
             }
         }
+		[HttpPost]
+        public ActionResult Readonly(HttpPostedFileBase firstFile)
+        {
+			string DefaultPassword = "OpenS0urcePdfUtilsH@sSup3rL0ngPasswords4Humans";
+            string filename = $"{firstFile.FileName}-readonly.pdf";
+            using (MemoryStream ms = new MemoryStream())
+            {
+				WriterProperties writerProperties = new WriterProperties();
+                writerProperties.SetStandardEncryption(null, UTF8Encoding.UTF8.GetBytes(DefaultPassword), EncryptionConstants.ALLOW_PRINTING | EncryptionConstants.ALLOW_FILL_IN, EncryptionConstants.ENCRYPTION_AES_128);
+                using (PdfDocument pdf = new PdfDocument(new PdfWriter(ms, writerProperties)))
+                {
+                    pdf.GetWriter().SetCompressionLevel(9);
+                    using (PdfReader reader = new PdfReader(firstFile.InputStream))
+                    {
+                        PdfDocument srcDoc = new PdfDocument(reader);
+                        srcDoc.CopyPagesTo(1, srcDoc.GetNumberOfPages(), pdf);
+                    }
+                    pdf.Close();
+                    return File(ms.ToArray(), "application/pdf", filename);
+                }
+            }
+        }
+        public ActionResult Stamp()
+        {
+            return View();
+        }
         [HttpPost]
-        public ActionResult Stitch(HttpPostedFileBase firstFile, HttpPostedFileBase secondFile)
+        public ActionResult Stamped(HttpPostedFileBase pdfFile, string IssuedBy)
+        {
+            using (PdfReader pdfReader = new PdfReader(pdfFile.InputStream))
+            {
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    using (PdfWriter pdfWriter = new PdfWriter(ms))
+                    {
+                        PdfDocument pdfDocument = new PdfDocument(pdfReader, pdfWriter);
+                        iText.Layout.Document document = new iText.Layout.Document(pdfDocument);
+
+                        using (MemoryStream msimg = new MemoryStream())
+                        {
+                            Guid instance = Guid.NewGuid();
+                            string fullurl = Url.Action("Verify", "Home", new { @area = string.Empty, @id = instance }, "https");
+                            QRCodeData data = new QRCodeGenerator().CreateQrCode(
+                                $"{{ 'id': '{instance}', 'issuer': '{IssuedBy}', 'stamped': '{DateTime.UtcNow.ToString("d MMM yyyy HH:mm:ss")}', 'author': 'The Convergency Hub PDF Verifier', 'url': '{fullurl}' }}", QRCoder.QRCodeGenerator.ECCLevel.Q);
+                            BitmapByteQRCode qrCode = new BitmapByteQRCode(data);
+
+                            ImageData imageData = ImageDataFactory.Create(qrCode.GetGraphic(40));
+
+                            float left = pdfDocument.GetDefaultPageSize().GetLeft();
+                            float bottom = pdfDocument.GetDefaultPageSize().GetBottom();
+                            Image image = new Image(imageData)
+                                    .ScaleToFit(80, 80)
+                                    .SetFixedPosition(1, left, bottom);
+                            document.Add(image);
+                            document.Close();
+                            pdfWriter.Close();
+
+                            using (Stream copy = new MemoryStream(ms.ToArray()))
+                            {
+                                ConvergencyCloudFile uploadedSOA = GetCloudFileHandler()
+                                    .UploadSingleFile("stamped"
+                                    , instance.ToString()
+                                    , copy);
+                            }
+                        }
+                        return File(ms.ToArray(), "application/pdf", $"stamped-{pdfFile.FileName}");
+                    }
+                }
+            }
+        }
+        protected CloudFileHandler GetCloudFileHandler()
+        {
+            return new CloudFileHandler(OpenSourceConfig.CloudStorageConnectionString, OpenSourceConfig.CloudStorageContainerReference);
+        }
+        [HttpPost]
+        public ActionResult Stitch(HttpPostedFileBase firstFile, HttpPostedFileBase secondFile, string ReadonlyPassword)
         {
             string filename = $"{firstFile.FileName}-merged.pdf";
             using (MemoryStream ms = new MemoryStream())
             {
-                using (PdfDocument pdf = new PdfDocument(new PdfWriter(ms)))
+                WriterProperties writerProperties = null;
+                if (!string.IsNullOrEmpty(ReadonlyPassword))
+                {
+                    writerProperties = new WriterProperties();
+                    writerProperties.SetStandardEncryption(null, UTF8Encoding.UTF8.GetBytes(ReadonlyPassword), EncryptionConstants.ALLOW_PRINTING | EncryptionConstants.ALLOW_FILL_IN, EncryptionConstants.ENCRYPTION_AES_128);
+                }
+                using (PdfDocument pdf = new PdfDocument(new PdfWriter(ms, writerProperties)))
                 {
                     pdf.GetWriter().SetCompressionLevel(9);
                     using (PdfReader reader = new PdfReader(firstFile.InputStream))
