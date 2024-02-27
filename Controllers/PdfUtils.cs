@@ -164,6 +164,13 @@ namespace TchOpenSource.Controllers
             var pdfFiles = Files.Where(x => x.FileName.EndsWith("pdf"));
             var signatureImage = Files.FirstOrDefault(x => !x.FileName.EndsWith("pdf"));
 
+            ImageData imageData = null;
+            using (MemoryStream msimg = new MemoryStream())
+            {
+                signatureImage.InputStream.CopyTo(msimg);
+                msimg.Position = 0;
+                imageData = ImageDataFactory.CreatePng(msimg.ToArray());
+            }
             foreach (var pdfFile in pdfFiles)
             {
                 using (PdfReader pdfReader = new PdfReader(pdfFile.InputStream))
@@ -175,22 +182,18 @@ namespace TchOpenSource.Controllers
                             PdfDocument pdfDocument = new PdfDocument(pdfReader, pdfWriter);
                             iText.Layout.Document document = new iText.Layout.Document(pdfDocument);
 
-                            using (MemoryStream msimg = new MemoryStream())
+                            for (int PageNr = 1; PageNr <= pdfDocument.GetNumberOfPages(); PageNr++)
                             {
-                                signatureImage.InputStream.CopyTo(msimg);
-                                ImageData imageData = ImageDataFactory.Create(msimg.ToArray());
-
-                                for (int PageNr = 1; PageNr == pdfDocument.GetNumberOfPages(); PageNr++)
-                                {
-                                    float right = pdfDocument.GetDefaultPageSize().GetRight();
-                                    float bottom = pdfDocument.GetDefaultPageSize().GetBottom();
-                                    Image image = new Image(imageData)
-                                            .ScaleToFit(20, 20)
-                                            .SetFixedPosition(PageNr, right - 50, bottom - 50);
-                                    document.Add(image);
-                                }
-                                document.Close();
+                                float right = pdfDocument.GetDefaultPageSize().GetRight();
+                                float bottom = pdfDocument.GetDefaultPageSize().GetBottom();
+                                Image image = new Image(imageData)
+                                        .ScaleToFit(32, 32);
+                                image.SetFixedPosition(PageNr, right - 48, bottom + 32);
+                                document.Add(image);
                             }
+                            document.Close();
+                            pdfWriter.Close();
+
                             files.Add(new Tuple<byte[], string>(ms.ToArray(), pdfFile.FileName));
                         }
                     }
@@ -423,18 +426,12 @@ namespace TchOpenSource.Controllers
             return new CloudFileHandler(OpenSourceConfig.CloudStorageConnectionString, OpenSourceConfig.CloudStorageContainerReference);
         }
         [HttpPost]
-        public ActionResult Stitch(HttpPostedFileBase firstFile, HttpPostedFileBase secondFile, string ReadonlyPassword)
+        public ActionResult Stitch(HttpPostedFileBase firstFile, HttpPostedFileBase secondFile)
         {
             string filename = $"{firstFile.FileName}-merged.pdf";
             using (MemoryStream ms = new MemoryStream())
             {
-                WriterProperties writerProperties = null;
-                if (!string.IsNullOrEmpty(ReadonlyPassword))
-                {
-                    writerProperties = new WriterProperties();
-                    writerProperties.SetStandardEncryption(null, UTF8Encoding.UTF8.GetBytes(ReadonlyPassword), EncryptionConstants.ALLOW_PRINTING | EncryptionConstants.ALLOW_FILL_IN, EncryptionConstants.ENCRYPTION_AES_128);
-                }
-                using (PdfDocument pdf = new PdfDocument(new PdfWriter(ms, writerProperties)))
+                using (PdfDocument pdf = new PdfDocument(new PdfWriter(ms)))
                 {
                     pdf.GetWriter().SetCompressionLevel(9);
                     using (PdfReader reader = new PdfReader(firstFile.InputStream))
