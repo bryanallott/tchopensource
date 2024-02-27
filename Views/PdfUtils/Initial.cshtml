@@ -2,38 +2,24 @@
     ViewBag.Title = "Initial Pages on PDF";
 }
 
-    <div class="about-area section-padding bg-gray">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-6 col-md-12 col-xs-12 wow fadeInRight animated" data-wow-delay="0.3s" style="visibility: visible;-webkit-animation-delay: 0.3s; -moz-animation-delay: 0.3s; animation-delay: 0.3s;">
-                    <div class="about-wrapper wow fadeInLeft animated" data-wow-delay="0.3s" style="visibility: visible;-webkit-animation-delay: 0.3s; -moz-animation-delay: 0.3s; animation-delay: 0.3s;">
-                        <div>
-                            <div class="site-heading">
-                                @{Html.RenderPartial("_Nav"); }
-                            </div>
-                            <div class="content">
-                                <p class="lead">
-                                    Upload your PDF files and one image file which is your initial to be stamped onto each page of each PDF.
-                                </p>
-
-                                <form action="@Url.Action("InitialPages", "PdfUtils")" method="post" enctype="multipart/form-data">
-                                    <div class="form-group">
-                                        <label>Select Files (up to 30Mb at a time)</label>
-                                        <input type="file" multiple name="files" required />
-                                    </div>
-                                    <div class="form-group">
-                                        <button class="btn btn-primary" type="submit">Initial</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-lg-6 col-md-12 col-xs-12 info">
-                    <img class="img-fluid" src="~/Content/fusion/img/about/img-1.png" alt="">
-                </div>
-            </div>
-        </div>
+<div class="site-heading">
+    @{Html.RenderPartial("_Nav"); }
+</div>
+<div class="content">
+    <p class="lead">
+        Upload your PDF files and <span style="text-decoration:underline">one PNG image file</span> which is your initial to be stamped onto the bottom right corner of each page of each uploaded PDF.
+    </p>
+    <div class="alert-info">
+        For best results, upload a PNG with a transparent background and relatively square with as little whitespace around the signature as possible. i.e. cropped neatly.
     </div>
 
+    <form action="@Url.Action("InitialPages", "PdfUtils")" method="post" enctype="multipart/form-data">
+        <div class="form-group">
+            <label>Select Files (up to 30Mb at a time)</label>
+            <input type="file" multiple name="files" required />
+        </div>
+        <div class="form-group">
+            <button class="btn btn-primary" type="submit">Initial</button>
+        </div>
+    </form>
+</div>

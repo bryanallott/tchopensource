@@ -14,7 +14,7 @@
 
 
     <header id="header-wrap">
-        <nav class="navbar navbar-expand-md bg-inverse fixed-top scrolling-navbar">
+        <nav class="navbar navbar-expand-md bg-inverse fixed-top">
             <div class="container">
                 <a href="@Url.Action("Index", "Home")" class="navbar-brand"><img src="~/Content/fusion/img/logo.png" alt=""></a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
@@ -22,11 +22,11 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarCollapse">
                     <ul class="navbar-nav mr-auto w-100 justify-content-end clearfix">
-                        <li class="nav-item active">
-                            <a class="nav-link" href="@Url.Action("Index", "Home")">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/Home/Index">
                                 Home
                             </a>
-                            <a class="nav-link" href="@Url.Action("Index", "PdfUtils")">
+                            <a class="nav-link" href="/PdfUtils/Index">
                                 PDF Utils
                             </a>
                         </li>
@@ -39,7 +39,24 @@
 
     </header>
 
-    @RenderBody()
+    <div class="about-area section-padding bg-gray">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6 col-md-12 col-xs-12 wow fadeInRight animated" data-wow-delay="0.3s" style="visibility: visible;-webkit-animation-delay: 0.3s; -moz-animation-delay: 0.3s; animation-delay: 0.3s;">
+                    <div class="about-wrapper wow fadeInLeft animated" data-wow-delay="0.3s" style="visibility: visible;-webkit-animation-delay: 0.3s; -moz-animation-delay: 0.3s; animation-delay: 0.3s;">
+                        <div>
+                            @RenderBody()
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6 col-md-12 col-xs-12 info">
+                    <img class="img-fluid" src="~/Content/fusion/img/about/img-1.png" alt="">
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     @RenderSection("scripts", required: false)
 </body>

@@ -29,44 +29,29 @@
 
 }
 
-<div class="about-area section-padding bg-gray">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-6 col-md-12 col-xs-12 info">
-                <div class="about-wrapper wow fadeInLeft animated" data-wow-delay="0.3s" style="visibility: visible;-webkit-animation-delay: 0.3s; -moz-animation-delay: 0.3s; animation-delay: 0.3s;">
-                    <div>
-                        <div class="site-heading">
-                            @{Html.RenderPartial("_Nav"); }
-                        </div>
-                        <div class="content">
-                            <p class="lead">
-                                Type in your document online and download it as a PDF.
-                            </p>
-
-                            <form action="@Url.Action("MakePdf", "PdfUtils")" method="post" enctype="multipart/form-data">
-                                <div class="form-group">
-                                    <label>Password protect (optional)</label>
-                                    <input type="text" name="password" maxlength="32" />
-                                </div>
-                                <div class="form-group">
-                                    <label>Password protect editing (optional)</label>
-                                    <input type="text" name="passwordedit" maxlength="32" />
-                                </div>
-                                <div class="form-group">
-                                    <textarea id="mytextarea" name="Content">Start typing in your document here</textarea>
-                                </div>
-                                <div class="form-group">
-                                    <button class="btn btn-primary" type="submit">Make</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-6 col-md-12 col-xs-12 wow fadeInRight animated" data-wow-delay="0.3s" style="visibility: visible;-webkit-animation-delay: 0.3s; -moz-animation-delay: 0.3s; animation-delay: 0.3s;">
-                <img class="img-fluid" src="~/Content/fusion/img/about/img-1.png" alt="">
-            </div>
-        </div>
-    </div>
+<div class="site-heading">
+    @{Html.RenderPartial("_Nav"); }
 </div>
 
+<div class="content">
+    <p class="lead">
+        Type in your document online and download it as a PDF.
+    </p>
+
+    <form action="@Url.Action("MakePdf", "PdfUtils")" method="post" enctype="multipart/form-data">
+        <div class="form-group">
+            <label>Password protect (optional)</label>
+            <input type="text" name="password" maxlength="32" />
+        </div>
+        <div class="form-group">
+            <label>Password protect editing (optional)</label>
+            <input type="text" name="passwordedit" maxlength="32" />
+        </div>
+        <div class="form-group">
+            <textarea id="mytextarea" name="Content">Start typing in your document here</textarea>
+        </div>
+        <div class="form-group">
+            <button class="btn btn-primary" type="submit">Make</button>
+        </div>
+    </form>
+</div>

@@ -6,41 +6,28 @@
 
 }
 
-<div class="about-area section-padding bg-gray">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-6 col-md-12 col-xs-12 info">
-                <div class="about-wrapper wow fadeInLeft animated" data-wow-delay="0.3s" style="visibility: visible;-webkit-animation-delay: 0.3s; -moz-animation-delay: 0.3s; animation-delay: 0.3s;">
-                    <div>
-                        <div class="site-heading">
-                            @{Html.RenderPartial("_Nav"); }
-                        </div>
-                        <div class="content">
-                            <p class="lead">
-                                Upload a document to be stamped so that it can be verified later.
-                            </p>
 
-                            <form action="@Url.Action("Stamped", "PdfUtils")" method="post" enctype="multipart/form-data">
-                                <div class="form-group">
-                                    <label>Select a PDF to stamp (up to 30Mb at a time)</label>
-                                    <input type="file" multiple name="pdfFile" required />
-                                </div>
-                                <div class="form-group">
-                                    <label>Your name</label>
-                                    <input type="text" name="IssuedBy" maxlength="128" required />
-                                </div>
-                                <div class="form-group">
-                                    <button class="btn btn-primary" type="submit">Stamp</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-6 col-md-12 col-xs-12 wow fadeInRight animated" data-wow-delay="0.3s" style="visibility: visible;-webkit-animation-delay: 0.3s; -moz-animation-delay: 0.3s; animation-delay: 0.3s;">
-                <img class="img-fluid" src="~/Content/fusion/img/about/img-1.png" alt="">
-            </div>
-        </div>
-    </div>
+<div class="site-heading">
+    @{Html.RenderPartial("_Nav"); }
 </div>
-
+<div class="content">
+    <p class="lead">
+        Upload a document to be stamped so that it can be verified later.
+    </p>
+    <div class="alert-info">
+        This will insert a QR code onto the bottom left corner of the first page which recipients can use to verify the PDF they received is the same as the one you have issued.
+    </div>
+    <form action="@Url.Action("Stamped", "PdfUtils")" method="post" enctype="multipart/form-data">
+        <div class="form-group">
+            <label>Select a PDF to stamp (up to 30Mb at a time)</label>
+            <input type="file" multiple name="pdfFile" required />
+        </div>
+        <div class="form-group">
+            <label>Your name</label>
+            <input type="text" name="IssuedBy" maxlength="128" required />
+        </div>
+        <div class="form-group">
+            <button class="btn btn-primary" type="submit">Stamp</button>
+        </div>
+    </form>
+</div>
