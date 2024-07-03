@@ -158,7 +158,7 @@ namespace TchOpenSource.Controllers
             return View();
         }
         [HttpPost]
-        public ActionResult InitialPages(List<HttpPostedFileBase> Files)
+        public ActionResult InitialPages(List<HttpPostedFileBase> Files, bool Higher, bool Left)
         {
             List<Tuple<byte[], string>> files = new List<Tuple<byte[], string>>();
             var pdfFiles = Files.Where(x => x.FileName.EndsWith("pdf"));
@@ -186,6 +186,14 @@ namespace TchOpenSource.Controllers
                             {
                                 float right = pdfDocument.GetDefaultPageSize().GetRight();
                                 float bottom = pdfDocument.GetDefaultPageSize().GetBottom();
+                                if(Higher)
+                                {
+                                    bottom += 32;
+                                }
+                                if (Left)
+                                {
+                                    right -= 32;
+                                }
                                 Image image = new Image(imageData)
                                         .ScaleToFit(32, 32);
                                 image.SetFixedPosition(PageNr, right - 48, bottom + 32);
