@@ -13,3 +13,7 @@
 /tchopensourcecli/resources/affidavit.html
 /tchopensourcecli/resources
 /.vs/ProjectEvaluation
+/tchopensourcecli/TchOpenSourceClientOnly/.vs/TchOpenSourceClientOnly
+/.vs/TchOpenSource.csproj.dtbcache.json
+/obj
+/tchopensourcecli/bin/Debug/net10.0

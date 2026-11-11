@@ -1,32 +1,45 @@
-﻿@{
+@{
     ViewBag.Title = "Password Protect PDFs";
 }
 
-<div class="site-heading">
-    @{Html.RenderPartial("_Nav"); }
-</div>
+<div class="page-wrapper">
+    <div class="page-main">
+        <partial name="_Nav" />
+        <h1 class="page-title">Password Protect</h1>
+        <p class="page-desc">
+            Add password protection to your PDFs. Set a reading password, an editing password, or both.
+        </p>
 
-<div class="content">
-    <p class="lead">
-        Upload multiple files that all need to be password protected. The download will contain those same PDF files, just password protected for reading.
-    </p>
+        <div class="card">
+            <form action="@Url.Action("MakeProtectionBundle", "PdfUtils")" method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label>Select Files</label>
+                    <div class="file-upload">
+                        <svg class="file-upload-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                        <div class="file-upload-text"><strong>Click to upload</strong> or drag and drop</div>
+                        <div class="file-upload-hint">Up to 30MB total, multiple files allowed</div>
+                        <input type="file" multiple name="files" required />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Reading Password (optional)</label>
+                    <input type="text" name="password" maxlength="32" placeholder="Enter a password..." />
+                </div>
+                <div class="form-group">
+                    <label>Editing Password (optional)</label>
+                    <input type="text" name="passwordedit" maxlength="32" placeholder="Enter a password..." />
+                </div>
+                <button class="btn-primary" type="submit">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                    Protect
+                </button>
+            </form>
+        </div>
+    </div>
 
-    <form action="@Url.Action("MakeProtectionBundle", "PdfUtils")" method="post" enctype="multipart/form-data">
-        <div class="form-group">
-            <label>Select Files (up to 30Mb at a time)</label>
-            <input type="file" multiple name="files" required />
+    <div class="page-aside">
+        <div class="hero-illustration">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
         </div>
-        <div class="form-group">
-            <label>Password (optional)</label>
-            <input type="text" name="password" maxlength="32" />
-        </div>
-        <div class="form-group">
-            <label>Readonly Password (optional)</label>
-            <input type="text" name="passwordedit" maxlength="32" />
-        </div>
-        <div class="form-group">
-            <button class="btn btn-primary" type="submit">Protect</button>
-        </div>
-    </form>
+    </div>
 </div>
-                        

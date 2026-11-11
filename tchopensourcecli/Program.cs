@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace tchopensourcecli
 {
@@ -45,16 +46,16 @@ namespace tchopensourcecli
             }
             return newfile;
         }
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             var printer = new OpenSourcePdfPrinterClient();
             string htmlContent = GetAffidavit();
-            byte[] affidavitPdf = printer.GetPdf(htmlContent);
+            byte[] affidavitPdf = await printer.GetPdf(htmlContent);
             Console.WriteLine(SaveFile(affidavitPdf));
 
             byte[] file1 = GetFileBytes("preface.pdf");
             byte[] file2 = GetFileBytes("report.pdf");
-            byte[] sticthedPdf = printer.StitchPdfs(file1, file2);
+            byte[] sticthedPdf = await printer.StitchPdfs(file1, file2);
             Console.WriteLine(SaveFile(sticthedPdf));
 
         }

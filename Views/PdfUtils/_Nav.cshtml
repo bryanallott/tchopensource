@@ -1,11 +1,14 @@
-﻿
-<p class="mb-3">
-    <a href="/PdfUtils/Index">Stitch</a> |
-    <a href="/PdfUtils/Protect">Protect</a> |
-    <a href="/PdfUtils/Make">Make</a> |
-    <a href="/PdfUtils/Extract">Extract</a> |
-    <a href="/PdfUtils/Compress">Compress</a> |
-    <a href="/PdfUtils/Stamp">Stamp</a> |
-    <a href="/PdfUtils/Initial">Initial</a>
-</p>
-<h2 class="section-title">@ViewBag.Title</h2>
+@{
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString() ?? "";
+    var page = ViewContext.HttpContext.Request.Path.Value ?? "";
+}
+
+<div class="tool-nav">
+    <a href="/PdfUtils/Index" class="@(page.Contains("Index") || page == "/PdfUtils" ? "active" : "")">Stitch</a>
+    <a href="/PdfUtils/Compress" class="@(page.Contains("Compress") ? "active" : "")">Compress</a>
+    <a href="/PdfUtils/Protect" class="@(page.Contains("Protect") ? "active" : "")">Protect</a>
+    <a href="/PdfUtils/Make" class="@(page.Contains("Make") ? "active" : "")">Make</a>
+    <a href="/PdfUtils/Extract" class="@(page.Contains("Extract") ? "active" : "")">Extract</a>
+    <a href="/PdfUtils/Stamp" class="@(page.Contains("Stamp") ? "active" : "")">Stamp</a>
+    <a href="/PdfUtils/Initial" class="@(page.Contains("Initial") ? "active" : "")">Initial</a>
+</div>

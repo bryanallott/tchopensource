@@ -1,35 +1,53 @@
-﻿@{
+@{
     ViewBag.Title = "Initial Pages on PDF";
 }
 
-<div class="site-heading">
-    @{Html.RenderPartial("_Nav"); }
-</div>
-<div class="content">
-    <p class="lead">
-        Upload your PDF files and <span style="text-decoration:underline">one PNG image file</span> which is your initial to be stamped onto the bottom right corner of each page of each uploaded PDF.
-    </p>
-    <div class="alert-info">
-        For best results, upload a PNG with a transparent background and relatively square with as little whitespace around the signature as possible. i.e. cropped neatly.
+<div class="page-wrapper">
+    <div class="page-main">
+        <partial name="_Nav" />
+        <h1 class="page-title">Initial Pages</h1>
+        <p class="page-desc">
+            Upload your PDFs along with a PNG image of your initials. The initial will be stamped onto the bottom-right corner of every page.
+        </p>
+
+        <div class="info-box">
+            For best results, use a PNG with a transparent background. Crop it neatly with minimal whitespace around the signature.
+        </div>
+
+        <div class="card">
+            <form action="@Url.Action("InitialPages", "PdfUtils")" method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label>Select PDF files + one PNG initial image</label>
+                    <div class="file-upload">
+                        <svg class="file-upload-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                        <div class="file-upload-text"><strong>Click to upload</strong> or drag and drop</div>
+                        <div class="file-upload-hint">Up to 30MB total, multiple files allowed</div>
+                        <input type="file" multiple name="files" required />
+                    </div>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" name="Higher" value="true" id="chkHigher" />
+                    <label for="chkHigher">Place initial slightly higher than usual</label>
+                    <input type="hidden" name="Higher" value="false" />
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" name="Left" value="true" id="chkLeft" />
+                    <label for="chkLeft">Place initial slightly more left than usual</label>
+                    <input type="hidden" name="Left" value="false" />
+                </div>
+                <div style="margin-top: 24px;">
+                    <button class="btn-primary" type="submit">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.83 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+                        Apply Initials
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 
-    <form action="@Url.Action("InitialPages", "PdfUtils")" method="post" enctype="multipart/form-data">
-        <div class="form-group">
-            <label>Select Files (up to 30Mb at a time)</label>
-            <input type="file" multiple name="files" required />
+    <div class="page-aside">
+        <div class="hero-illustration">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.83 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
         </div>
-        <div class="form-group">
-            <label>Place initial slightly higher than usual</label>
-            <input type="checkbox" name="Higher" value="true" />
-            <input type="hidden" name="Higher" value="false" />
-        </div>
-        <div class="form-group">
-            <label>Place initial slightly more left than usual</label>
-            <input type="checkbox" name="Left" value="true" />
-            <input type="hidden" name="Left" value="false" />
-        </div>
-        <div class="form-group">
-            <button class="btn btn-primary" type="submit">Initial</button>
-        </div>
-    </form>
+    </div>
 </div>

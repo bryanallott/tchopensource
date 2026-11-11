@@ -1,33 +1,45 @@
-﻿@{
+@{
     ViewBag.Title = "Stamp a PDF";
 }
 
-@section scripts {
+<div class="page-wrapper">
+    <div class="page-main">
+        <partial name="_Nav" />
+        <h1 class="page-title">Stamp for Verification</h1>
+        <p class="page-desc">
+            Add a verification QR code to your PDF so recipients can confirm its authenticity.
+        </p>
 
-}
+        <div class="info-box">
+            A QR code will be placed on the bottom-left corner of the first page. Recipients can scan it to verify the PDF matches the original you issued.
+        </div>
 
-
-<div class="site-heading">
-    @{Html.RenderPartial("_Nav"); }
-</div>
-<div class="content">
-    <p class="lead">
-        Upload a document to be stamped so that it can be verified later.
-    </p>
-    <div class="alert-info">
-        This will insert a QR code onto the bottom left corner of the first page which recipients can use to verify the PDF they received is the same as the one you have issued.
+        <div class="card">
+            <form action="@Url.Action("Stamped", "PdfUtils")" method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label>Select a PDF</label>
+                    <div class="file-upload">
+                        <svg class="file-upload-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                        <div class="file-upload-text"><strong>Click to upload</strong> or drag and drop</div>
+                        <div class="file-upload-hint">Up to 30MB</div>
+                        <input type="file" multiple name="pdfFile" required />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Your Name</label>
+                    <input type="text" name="IssuedBy" maxlength="128" required placeholder="Enter your full name..." />
+                </div>
+                <button class="btn-primary" type="submit">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                    Stamp PDF
+                </button>
+            </form>
+        </div>
     </div>
-    <form action="@Url.Action("Stamped", "PdfUtils")" method="post" enctype="multipart/form-data">
-        <div class="form-group">
-            <label>Select a PDF to stamp (up to 30Mb at a time)</label>
-            <input type="file" multiple name="pdfFile" required />
+
+    <div class="page-aside">
+        <div class="hero-illustration">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
         </div>
-        <div class="form-group">
-            <label>Your name</label>
-            <input type="text" name="IssuedBy" maxlength="128" required />
-        </div>
-        <div class="form-group">
-            <button class="btn btn-primary" type="submit">Stamp</button>
-        </div>
-    </form>
+    </div>
 </div>

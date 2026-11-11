@@ -1,63 +1,45 @@
-﻿<!DOCTYPE html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - My ASP.NET Application</title>
-    @Styles.Render("~/Content/css")
-    @Scripts.Render("~/bundles/modernizr")
+    <title>@ViewBag.Title - PDF Tools</title>
+    <link rel="stylesheet" href="~/Content/Site.css" />
 </head>
 <body>
-
-    @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/bootstrap")
-
-
-    <header id="header-wrap">
-        <nav class="navbar navbar-expand-md bg-inverse fixed-top">
-            <div class="container">
-                <a href="@Url.Action("Index", "Home")" class="navbar-brand"><img src="~/Content/fusion/img/logo.png" alt=""></a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
-                    <i class="lni-menu"></i>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarCollapse">
-                    <ul class="navbar-nav mr-auto w-100 justify-content-end clearfix">
-                        <li class="nav-item">
-                            <a class="nav-link" href="/Home/Index">
-                                Home
-                            </a>
-                            <a class="nav-link" href="/PdfUtils/Index">
-                                PDF Utils
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-
-        @RenderSection("Hero", false)
-
+    <header class="site-navbar">
+        <div class="container">
+            <a href="@Url.Action("Index", "Home")" class="brand">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                PDF Tools
+            </a>
+            <nav>
+                <a href="@Url.Action("Index", "Home")">Home</a>
+                <a href="@Url.Action("Index", "PdfUtils")" class="active">PDF Utils</a>
+            </nav>
+        </div>
     </header>
 
-    <div class="about-area section-padding bg-gray">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-6 col-md-12 col-xs-12 wow fadeInRight animated" data-wow-delay="0.3s" style="visibility: visible;-webkit-animation-delay: 0.3s; -moz-animation-delay: 0.3s; animation-delay: 0.3s;">
-                    <div class="about-wrapper wow fadeInLeft animated" data-wow-delay="0.3s" style="visibility: visible;-webkit-animation-delay: 0.3s; -moz-animation-delay: 0.3s; animation-delay: 0.3s;">
-                        <div>
-                            @RenderBody()
-                        </div>
-                    </div>
-                </div>
+    @RenderBody()
 
-                <div class="col-lg-6 col-md-12 col-xs-12 info">
-                    <img class="img-fluid" src="~/Content/fusion/img/about/img-1.png" alt="">
-                </div>
-            </div>
-        </div>
-    </div>
-
-
+    <script>
+    document.querySelectorAll('.file-upload').forEach(function(zone) {
+        var input = zone.querySelector('input[type="file"]');
+        var text = zone.querySelector('.file-upload-text');
+        if (!input || !text) return;
+        input.addEventListener('change', function() {
+            if (input.files.length > 0) {
+                var names = Array.from(input.files).map(function(f) { return f.name; });
+                text.innerHTML = '<strong>' + names.length + ' file' + (names.length > 1 ? 's' : '') + '</strong> selected';
+                zone.style.borderColor = 'var(--primary)';
+                zone.style.background = 'var(--primary-light)';
+            }
+        });
+        zone.addEventListener('dragover', function(e) { e.preventDefault(); zone.style.borderColor = 'var(--primary)'; zone.style.background = 'var(--primary-light)'; });
+        zone.addEventListener('dragleave', function() { zone.style.borderColor = ''; zone.style.background = ''; });
+        zone.addEventListener('drop', function() { zone.style.borderColor = ''; zone.style.background = ''; });
+    });
+    </script>
     @RenderSection("scripts", required: false)
 </body>
 </html>

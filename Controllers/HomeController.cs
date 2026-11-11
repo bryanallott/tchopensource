@@ -1,6 +1,6 @@
-﻿using ConvergencyBloc.AzureBlob;
+using ConvergencyBloc.AzureBlob;
 using System;
-using System.Web.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using TchOpenSource.Models;
 
 namespace TchOpenSource.Controllers
@@ -21,7 +21,7 @@ namespace TchOpenSource.Controllers
         {
             return View();
         }
-        
+
         public ActionResult About()
         {
             ViewBag.Message = "The Convergency Hub Pdf Utils.";
@@ -31,6 +31,11 @@ namespace TchOpenSource.Controllers
         public ActionResult Contact()
         {
             ViewBag.Message = "info@theconvergency.co.za";
+            return View();
+        }
+
+        public ActionResult Error()
+        {
             return View();
         }
     }

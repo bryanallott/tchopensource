@@ -1,36 +1,40 @@
-﻿using System;
+﻿using RestSharp;
+using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace tchopensourcecli
 {
     public class OpenSourcePdfPrinterClient
     {
-        readonly string BaseUrl = "https://localhost:44384/";
-        public byte[] GetPdf(string html)
+        readonly string BaseUrl = "https://localhost:44300/";
+        public async Task<byte[]> GetPdf(string html)
         {
-            RestSharp.RestRequest request = new RestSharp.RestRequest("/PdfUtils/MakePdf", RestSharp.Method.POST);
+            RestRequest request = new RestRequest("/PdfUtils/MakePdf", Method.Post);
             //request.AddHeader("content-type", "application/x-www-form-urlencoded");
-            request.AddParameter("Content", html, RestSharp.ParameterType.GetOrPost);
-            return Execute(request);
+            request.AddParameter("Content", html, ParameterType.GetOrPost);
+            return await Execute(request);
         }
 
-        public byte[] StitchPdfs(byte[] file1, byte[] file2)
+        public async Task<byte[]> StitchPdfs(byte[] file1, byte[] file2)
         {
-            RestSharp.RestRequest request = new RestSharp.RestRequest("/PdfUtils/Stitch", RestSharp.Method.POST);
-            request.AddHeader("content-type", "multipart/form-data");
+            RestRequest request = new RestRequest("/PdfUtils/Stitch", Method.Post);
+            //request.AddHeader("content-type", "multipart/form-data");
+            //request.AlwaysMultipartFormData = true;
             request.AddFile("firstFile", file1, "first.pdf");
+            //request.AddFile("firstFile", @"C:\\Users\\bryan\\source\\repos\\tchopensource\\tchopensourcecli\\bin\\Debug\\netcoreapp3.1\\report.pdf");
             request.AddFile("secondFile", file2, "second.pdf");
-            return Execute(request);
+            request.AddParameter("Action", "stitch");
+            return await Execute(request);
         }
 
         //https://stackoverflow.com/questions/11513607/restsharp-unable-to-cast-object-of-system-string-to-type-system-generic-idicti
         /*In that code path the library attempts to assign your value to an IDictionary<string,object> regardless of what type it is.*/
-        public byte[] Execute(RestSharp.RestRequest request)
+        public async Task<byte[]> Execute(RestRequest request)
         {
-            var client = new RestSharp.RestClient();
-            client.BaseUrl = new Uri(BaseUrl);
-            var response = client.Execute(request);
+            var client = new RestClient(BaseUrl);
+            var response = await client.ExecuteAsync(request);
 
             if (response.ErrorException != null)
             {

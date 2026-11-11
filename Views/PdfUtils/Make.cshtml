@@ -1,57 +1,62 @@
-﻿@{
+@{
     ViewBag.Title = "Make a PDF";
 }
 
 @section scripts {
     <script src="~/Scripts/tinymce/tinymce.js" type="text/javascript"></script>
-
-
     <script>
-        (function () {
-            $(function () {
-                tinymce.init({
-                    selector: '#mytextarea',
-                    menubar: true,
-                    valid_children: "+body[link|style]",
-                    force_p_newlines: false,
-                    forced_root_block: '',
-                    theme: 'modern',
-                    plugins: [
-                        'advlist autolink lists link image charmap print preview anchor textcolor',
-                        'searchreplace visualblocks code fullscreen',
-                        'insertdatetime media table contextmenu paste code help wordcount'
-                    ],
-                    toolbar: 'undo redo |  formatselect | bold italic forecolor backcolor  | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat',
-                });
+        document.addEventListener('DOMContentLoaded', function () {
+            tinymce.init({
+                selector: '#mytextarea',
+                menubar: true,
+                valid_children: "+body[link|style]",
+                force_p_newlines: false,
+                forced_root_block: '',
+                height: 350,
+                plugins: [
+                    'advlist autolink lists link image charmap print preview anchor textcolor',
+                    'searchreplace visualblocks code fullscreen',
+                    'insertdatetime media table paste code help wordcount'
+                ],
+                toolbar: 'undo redo |  formatselect | bold italic forecolor backcolor  | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat',
             });
-        })();
+        });
     </script>
-
 }
 
-<div class="site-heading">
-    @{Html.RenderPartial("_Nav"); }
-</div>
+<div class="page-wrapper">
+    <div class="page-main">
+        <partial name="_Nav" />
+        <h1 class="page-title">Make a PDF</h1>
+        <p class="page-desc">
+            Type or paste your content below and download it as a PDF. Optionally add password protection.
+        </p>
 
-<div class="content">
-    <p class="lead">
-        Type in your document online and download it as a PDF.
-    </p>
+        <div class="card">
+            <form action="@Url.Action("MakePdf", "PdfUtils")" method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label>Reading Password (optional)</label>
+                    <input type="text" name="password" maxlength="32" placeholder="Enter a password..." />
+                </div>
+                <div class="form-group">
+                    <label>Editing Password (optional)</label>
+                    <input type="text" name="passwordedit" maxlength="32" placeholder="Enter a password..." />
+                </div>
+                <div class="form-group">
+                    <label>Document Content</label>
+                    <textarea id="mytextarea" name="Content">Start typing your document here</textarea>
+                </div>
+                <button class="btn-primary" type="submit">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                    Create PDF
+                </button>
+            </form>
+        </div>
+    </div>
 
-    <form action="@Url.Action("MakePdf", "PdfUtils")" method="post" enctype="multipart/form-data">
-        <div class="form-group">
-            <label>Password protect (optional)</label>
-            <input type="text" name="password" maxlength="32" />
+    <div class="page-aside">
+        <div class="hero-illustration">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
         </div>
-        <div class="form-group">
-            <label>Password protect editing (optional)</label>
-            <input type="text" name="passwordedit" maxlength="32" />
-        </div>
-        <div class="form-group">
-            <textarea id="mytextarea" name="Content">Start typing in your document here</textarea>
-        </div>
-        <div class="form-group">
-            <button class="btn btn-primary" type="submit">Make</button>
-        </div>
-    </form>
+    </div>
 </div>

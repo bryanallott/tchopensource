@@ -1,23 +1,37 @@
-﻿@{
+@{
     ViewBag.Title = "Extract Text From PDFs";
 }
 
- 
-<div class="site-heading">
-    @{Html.RenderPartial("_Nav"); }
-</div>
-<div class="content">
-    <p class="lead">
-        Upload multiple files that all need to have their text extracted. The download will contain those same PDF files in text format.
-    </p>
+<div class="page-wrapper">
+    <div class="page-main">
+        <partial name="_Nav" />
+        <h1 class="page-title">Extract Text</h1>
+        <p class="page-desc">
+            Pull text content out of your PDFs. Upload multiple files and get back plain text versions of each.
+        </p>
 
-    <form action="@Url.Action("ExtractText", "PdfUtils")" method="post" enctype="multipart/form-data">
-        <div class="form-group">
-            <label>Select Files (up to 30Mb at a time)</label>
-            <input type="file" multiple name="files" required />
+        <div class="card">
+            <form action="@Url.Action("ExtractText", "PdfUtils")" method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label>Select Files</label>
+                    <div class="file-upload">
+                        <svg class="file-upload-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                        <div class="file-upload-text"><strong>Click to upload</strong> or drag and drop</div>
+                        <div class="file-upload-hint">Up to 30MB total, multiple files allowed</div>
+                        <input type="file" multiple name="files" required />
+                    </div>
+                </div>
+                <button class="btn-primary" type="submit">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
+                    Extract Text
+                </button>
+            </form>
         </div>
-        <div class="form-group">
-            <button class="btn btn-primary" type="submit">Extract</button>
+    </div>
+
+    <div class="page-aside">
+        <div class="hero-illustration">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
         </div>
-    </form>
+    </div>
 </div>
